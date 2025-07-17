@@ -27,15 +27,15 @@ export const handler = async (event, context) => {
     const requestBody = JSON.parse(event.body);
     const pickupLocation = requestBody.PickupLocation;
 
-    const unicorn = findUnicorn(pickupLocation);
+    const taxi = findTaxi(pickupLocation);
 
     try {
-        await recordRide(rideId, username, unicorn);
+        await recordRide(rideId, username, taxi);
         return {
             statusCode: 201,
             body: JSON.stringify({
                 RideId: rideId,
-                Unicorn: unicorn,
+                Taxi: taxi,
                 Eta: '30 seconds',
                 Rider: username,
             }),
@@ -49,18 +49,18 @@ export const handler = async (event, context) => {
     }
 };
 
-function findUnicorn(pickupLocation) {
-    console.log('Finding unicorn for ', pickupLocation.Latitude, ', ', pickupLocation.Longitude);
+function findTaxi(pickupLocation) {
+    console.log('Finding taxi for ', pickupLocation.Latitude, ', ', pickupLocation.Longitude);
     return fleet[Math.floor(Math.random() * fleet.length)];
 }
 
-async function recordRide(rideId, username, unicorn) {
+async function recordRide(rideId, username, taxi) {
     const params = {
         TableName: 'Rides',
         Item: {
             RideId: rideId,
             User: username,
-            Unicorn: unicorn,
+            Taxi: taxi,
             RequestTime: new Date().toISOString(),
         },
     };
